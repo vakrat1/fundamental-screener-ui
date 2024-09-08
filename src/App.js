@@ -1,25 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+import React from 'react';
+import { Admin, Resource } from 'react-admin';
+import jsonServerProvider from 'ra-data-json-server';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import GridPage from './GridPage';
+import AppBarChart from './AppBarChart';
+import Main from './main';
+
+import CustomAppBar from './CustomAppBar';
+
+import CustomMenu from './CustomMenu';  // Import the CustomMenu
+
+
+// Create a Data Provider
+const dataProvider = jsonServerProvider('https://jsonplaceholder.typicode.com');
+
+const App = () => (
+  // <Admin dataProvider={dataProvider} appBar={CustomAppBar}>
+  // <Admin dataProvider={dataProvider}>
+  <Admin dataProvider={dataProvider} menu={CustomMenu}>
+    <Resource name="main" list={Main} />
+    <Resource name="grid" list={GridPage} />
+    <Resource name="charts" list={AppBarChart} />
+  </Admin>
+);
 
 export default App;
