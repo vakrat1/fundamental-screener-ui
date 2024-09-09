@@ -1,46 +1,30 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, CssBaseline, Divider } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, CssBaseline, Divider, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-
-
-import GridPage from './pages/GridPage';
-import BarChart from './pages/AppBarChart';
-import Main from './pages/main';
+import { Link } from 'react-router-dom';
 
 const drawerWidth = 240;
 
-// const menuItems = [
-//             { text: 'Main', path: '/' },
-//             { text: 'GridPage', path: '/grid' },
-//             { text: 'BarChart', path: '/barchart' },
-//         ];
-
-
-
-function Layout() {
+function Layout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
-//   const [open, setOpen] = React.useState(true);
-
-
+  // Toggle the drawer open/close state
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   const drawer = (
     <div>
-      <Toolbar /> {/* This adds space for the AppBar */}
+      <Toolbar /> {/* Adds space for the AppBar */}
       <Divider />
       <List>
-        {/* Map over menu items */}
-        <ListItem button component={Link} to="/">
-          <ListItemText primary="Main" />
+        <ListItem button component={Link} to="/" onClick={handleDrawerToggle}>
+          <ListItemText primary="Home" />
         </ListItem>
-        <ListItem button component={Link} to="/data">
+        <ListItem button component={Link} to="/data" onClick={handleDrawerToggle}>
           <ListItemText primary="Data" />
         </ListItem>
-        <ListItem button component={Link} to="/charts">
+        <ListItem button component={Link} to="/charts" onClick={handleDrawerToggle}>
           <ListItemText primary="Charts" />
         </ListItem>
       </List>
@@ -48,19 +32,25 @@ function Layout() {
   );
 
   return (
-    <div style={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      
-      {/* Top Bar */}
-      <AppBar position="fixed" sx={{ width: { sm: `calc(100% - ${drawerWidth}px)` }, ml: { sm: `${drawerWidth}px` } }}>
+
+      {/* Full-width Top Bar */}
+      <AppBar
+        position="fixed"
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1, // Ensures the AppBar is above the drawer
+          width: '100%',
+        }}
+      >
         <Toolbar>
-          {/* Menu button for mobile */}
+          {/* Hamburger Menu Button */}
           <IconButton
             color="inherit"
             aria-label="open drawer"
             edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            onClick={handleDrawerToggle}  // Toggle drawer when hamburger button is clicked
+            sx={{ mr: 2 }}
           >
             <MenuIcon />
           </IconButton>
@@ -70,11 +60,24 @@ function Layout() {
         </Toolbar>
       </AppBar>
 
-      {/* Side Drawer */}
+      {/* Drawer (Side Menu) */}
+      <Drawer
+        variant="temporary"  // Change to temporary to make it closable on click
+        open={mobileOpen}
+        onClose={handleDrawerToggle}  // Close drawer when clicking outside
+        sx={{
+          display: { xs: 'block', sm: 'none' },  // Drawer for mobile only
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+        }}
+      >
+        {drawer}
+      </Drawer>
+
+      {/* Permanent Drawer for larger screens */}
       <Drawer
         variant="permanent"
         sx={{
-          display: { xs: 'none', sm: 'block' },
+          display: { xs: 'none', sm: 'block' },  // Permanent drawer for larger screens
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
         }}
         open
@@ -82,30 +85,19 @@ function Layout() {
         {drawer}
       </Drawer>
 
-      {/* Drawer for mobile devices */}
-      <Drawer
-        variant="temporary"
-        open={mobileOpen}
-        onClose={handleDrawerToggle}
-        ModalProps={{
-          keepMounted: true, // Better open performance on mobile
-        }}
+      {/* Main Content */}
+      <Box
+        component="main"
         sx={{
-          display: { xs: 'block', sm: 'none' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          flexGrow: 1,
+          p: 3,
+          mt: 8, // Adjust the top margin to ensure content is pushed below the AppBar
+          width: '100%',
         }}
       >
-        {drawer}
-      </Drawer>
-
-      {/* Main content */}
-      <main style={{ flexGrow: 1, padding: '24px', width: `calc(100% - ${drawerWidth}px)`, marginLeft: `${drawerWidth}px` }}>
-        <Toolbar /> {/* Adds spacing to offset the AppBar */}
-        <Typography paragraph>
-          Main content goes here. You can replace this with your own content or components.
-        </Typography>
-      </main>
-    </div>
+        {children}
+      </Box>
+    </Box>
   );
 }
 
