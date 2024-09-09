@@ -28,7 +28,7 @@ const yScale = scaleLinear({
   range: [height, 0]
 });
 
-function BarChart() {
+function AppBarChart() {
   return (
     <svg width={width} height={height}>
       <Group>
@@ -49,4 +49,4 @@ function BarChart() {
   );
 }
 
-export default BarChart
+export default AppBarChart
